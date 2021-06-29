@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+    
+{% block title %}
+    Bienvenue sur le meilleur réseau d'annonces pour SmartPhone
+{% endblock %}
+{% block header %}
+    Voici le Header
+{% endblock %}
+
+
+{% block body %}
+<div class="container">
+    <div class="jumbotron mt-3">
+        <h1 class="display-3">Bienvenue sur i2i</h1>
+        <p class="lead">Nous mettons en relation les utilisateurs et les propriétaires qui 
+        veulent profiter d'opportunités et gagner de l'argent en proposant leur
+        téléphone.</p>
+        <hr class="my-4">
+        <p>Vous posséder plusieurs téléphones ou souhaitez louer un téléphone sur une 
+        période déterminé plutôt que d'acheter le dernier téléphone à la mode chaque année ?</p>
+        <p class="lead">
+            <a class="btn btn-secondary btn-lg" href="{{ path('ads_index') }}" role="button">Voir nos annonces</a>
+        </p>
+    </div>
+
+    <h2 class="h1 my-5">Nos annonces start</h2>
+
+    <div class="row">
+        {% for data in ads %}
+            {% include 'ad/_ad.html.twig' with {'ad': data.annonce} %}
+        {% endfor %}
+    </div>
+
+    <h2 class="h1 my-5">Nos propriétaires stars !</h2>
+
+    <div class="row">
+    {% for data in users %}
+        <div class="col">
+            <div class="card border-secondary mb-3">
+                <div class="card-body">
+                    <h4 class="card-title">{{data.user.fullName}}</h4>
+                    <hr>
+                    <div class="card-text">
+                        <img src="{{data.user.picture}}" alt="Avatar de {{data.user.fullName}}" class="float-left mr-3">
+                        <p>{{data.user.introduction}}</p>
+                        <a href="{{ path('user_show', {'slug':data.user.slug}) }}" class="btn btn-success float-right">En savoir plus !</a>
+                    </div>
+                </div>
+            </div> 
+        </div>
+    {% endfor %}
+    </div> 
+</div>
+{% endblock %}
