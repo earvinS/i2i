@@ -20,8 +20,8 @@ jobs:
           key: composer-v1-({ checksum "composer.json" })
           paths:
               - vendor
-      - run: ./bin/console doctrine:database:create --env=test
-      - run: ./bin/console doctrine:schema:create --env=test
+      - run: php bin/console doctrine:database:create --env=test
+      - run: php bin/console doctrine:schema:create --env=test
       - run:
           name: "Create Environment file"
           command: mv .env.test .env
