@@ -14,11 +14,9 @@ jobs:
           keys:
             - v1-dependencies-{{ checksum "composer.json" }}
             - v1-dependencies-
-
       - run:
           name: "Create Environment file"
           command: mv .env.test .env
-
       - run:
           name: "Install Dependencies"
           command: composer install -n --prefer-dist
@@ -27,6 +25,11 @@ jobs:
           key: v1-dependencies-{{ checksum "composer.json" }}
           paths:
             - ./vendor
+      - run:
+          name: Run migrations
+          commande: sql/docker-entrypoint.sh sql
+          environment:
+            DATABASE_URL: mysql://root:@127.0.0.1:3306/i2i
       - run:
           name: Run web server
           command: php -S localhost:8000 -t public
