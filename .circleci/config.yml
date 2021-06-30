@@ -6,14 +6,22 @@ jobs:
 
     steps:
       - checkout
-
       - run: sudo apt update
+      - run: sudo composer self-update
       - run: sudo docker-php-ext-install zip
 
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "composer.json" }}
             - v1-dependencies-
+      - run: composer install -n --optimize-autoloader --classmap-authoritative
+      - run: composer dump-autoload --optimize --classmap-authoritative
+      - save_cache:
+          key: composer-v1-({ checksum "composer.json" })
+          paths:
+              - vendor
+      - run: ./bin/console doctrine:database:create --env=test
+      - run: ./bin/console doctrine:schema:create --env=test
       - run:
           name: "Create Environment file"
           command: mv .env.test .env
