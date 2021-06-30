@@ -33,6 +33,8 @@ jobs:
           command: php -S localhost:8000 -t public
           background: true
 
-      - run:
-         name: "Run i2i test"
-         command: ./bin/phpunit
+workflows:
+    version: 2
+    unit_test:
+        jobs:
+            - phpunit
