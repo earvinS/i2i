@@ -45,9 +45,6 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
-      - name: Install Composer dependencies
-        run: make 
-
        # —— Tests 🧙‍️ —————————————————————————————————————————————————————————
       - name: Run functionnal and unit tests
         run: |
