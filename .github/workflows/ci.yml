@@ -2,7 +2,9 @@ name: CI Symfony
 on:
   push:
     branches:
+      - main
       - master
+      - staging
 env:
   ES_HTTP_PORT: 9209
 jobs:
