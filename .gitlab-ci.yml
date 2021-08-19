@@ -1,0 +1,58 @@
+default:
+  image: php:7.4-apache
+  services:
+  - mysql:latest
+
+cache:
+  paths:
+    - vendor/
+
+stages:
+  - TestUnitaire
+  - deployStaging
+  - deployProd
+
+testEntity:
+    stage: TestUnitaire
+    script:
+    - apt update -y
+    - pecl install xdebug
+    - docker-php-ext-enable xdebug
+    - apt install -y libzip-dev zip
+    - docker-php-ext-install pdo pdo_mysql zip
+    - curl -sS https://getcomposer.org/installer | php
+    - mv composer.phar /usr/local/bin/composer
+    - php bin/phpunit tests/Entity/
+
+staging:
+  type: deployStaging
+  image: ruby:latest
+  variables:
+    DATABASE_URL: $DATABASE_URL_STAGING
+    MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD_STAGING
+    MYSQL_ALLOW_EMPTY_PASSWORD: $MYSQL_PASSWORD_STAGING
+    MYSQL_RANDOM_ROOT_PASSWORD: $MYSQL_PASSWORD_STAGING
+  script:
+  - apt-get update -qy
+  - apt-get install -y ruby-dev
+  - gem install dpl
+  - dpl --provider=heroku --app=$HEROKU_APP_STAGING --api-key=$HEROKU_API_KEY
+  only:
+    - staging
+
+prod:
+  type: deployProd
+  image: ruby:latest
+  variables:
+    DATABASE_URL: $DATABASE_URL
+    MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
+    MYSQL_ALLOW_EMPTY_PASSWORD: $MYSQL_PASSWORD
+    MYSQL_RANDOM_ROOT_PASSWORD: $MYSQL_PASSWORD
+  script:
+  - apt-get update -qy
+  - apt-get install -y ruby-dev
+  - gem install dpl
+  - dpl --provider=heroku --app=$HEROKU_APP_PROD --api-key=$HEROKU_API_KEY
+  only:
+    - merge_requests
+    - master
