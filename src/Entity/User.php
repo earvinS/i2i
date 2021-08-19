@@ -2,21 +2,15 @@
 
 namespace App\Entity;
 
-use App\Entity\Ad;
-use App\Entity\Role;
-use Cocur\Slugify\Slugify;
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
-use ApiPlatform\Core\Api\FilterInterface;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use Doctrine\Common\Collections\Collection;
-use ApiPlatform\Core\Annotation\ApiResource;
+use Cocur\Slugify\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Security\Core\User\UserInterface;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -33,7 +27,6 @@ class User implements UserInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Groups({"users_read"})
-
      */
     private $id;
 
@@ -55,7 +48,6 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255)
      * @Assert\Email(message="Veuillez renseigner un email valide !")
      * @Groups({"users_read"})
-
      */
     private $email;
 
@@ -67,7 +59,6 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * 
      */
     private $hash;
 
@@ -80,7 +71,6 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255)
      * @Assert\Length(min=10,minMessage="Votre introduction doit faire au moins 10 caractère")
      * @Groups({"users_read"})
-
      */
     private $introduction;
 
@@ -119,23 +109,24 @@ class User implements UserInterface
      */
     private $comments;
 
-
-    public function getFullName(){
+    public function getFullName()
+    {
         return "{$this->firstName} {$this->lastName}";
     }
 
     /**
-     * Permet d'initialiser le Slug
+     * Permet d'initialiser le Slug.
      *
      * @ORM\PrePersist
      * @ORM\PreUpdate
-     * 
+     *
      * @return void
      */
-    public function initializeSlug(){
-        if(empty($this->slug)){
+    public function initializeSlug()
+    {
+        if (empty($this->slug)) {
             $slugify = new Slugify();
-            $this->slug = $slugify->slugify($this->firstName . ' ' . $this->lastName);
+            $this->slug = $slugify->slugify($this->firstName.' '.$this->lastName);
         }
     }
 
@@ -249,20 +240,22 @@ class User implements UserInterface
     }
 
     /**
-     * Undocumented function
+     * Undocumented function.
      *
      * @return array
      */
-    public function getRoles(){
-        $roles = $this->userRoles->map(function($role){
+    public function getRoles()
+    {
+        $roles = $this->userRoles->map(function ($role) {
             return $role->getTitle();
         })->toArray();
         $roles[] = 'ROLE_USER';
+
         return $roles;
     }
 
     /**
-     * Undocumented function
+     * Undocumented function.
      *
      * @return void
      */
@@ -276,9 +269,13 @@ class User implements UserInterface
         return $this->email;
     }
 
+    public function getSalt()
+    {
+    }
 
-    public function getSalt(){}
-    public function eraseCredentials(){}
+    public function eraseCredentials()
+    {
+    }
 
     /**
      * @return Collection|Ad[]
@@ -396,5 +393,4 @@ class User implements UserInterface
 
         return $this;
     }
-
 }

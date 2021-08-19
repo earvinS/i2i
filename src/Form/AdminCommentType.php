@@ -15,10 +15,10 @@ class AdminCommentType extends AbstractType
         $builder
 
             ->add('content', TextareaType::class, [
-                'label' => "Contenu du commentaire",
+                'label' => 'Contenu du commentaire',
                 'attr' => [
-                    'placeholder' => "Modifier / corrigez le contenur du commentaire."
-                ]
+                    'placeholder' => 'Modifier / corrigez le contenur du commentaire.',
+                ],
             ])
 
         ;

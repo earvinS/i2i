@@ -2,22 +2,19 @@
 
 namespace App\Entity;
 
-use App\Entity\User;
-use App\Entity\Image;
-use Cocur\Slugify\Slugify;
-use App\Repository\AdRepository;
-use Doctrine\ORM\Mapping as ORM;
-
-use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Repository\AdRepository;
+use Cocur\Slugify\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=AdRepository::class)
- * 
+ *
  * @ORM\HasLifecycleCallbacks
  * @UniqueEntity(
  *  fields={"title"},
@@ -116,69 +113,77 @@ class Ad
     }
 
     /**
-     * Permet de récupérer le commentaire d'une auteur par rapport à une annonce
+     * Permet de récupérer le commentaire d'une auteur par rapport à une annonce.
      *
-     * @param User $author
      * @return Comment|null
      */
-    public function getCommentFromAuthor(User $author){
-        foreach($this->comments as $comment){
-            if($comment->getAuthor() === $author) return $comment;
+    public function getCommentFromAuthor(User $author)
+    {
+        foreach ($this->comments as $comment) {
+            if ($comment->getAuthor() === $author) {
+                return $comment;
+            }
         }
 
         return null;
     }
 
     /**
-     * Permet de calculer la moyenne pour les notes des annonces via les commentaires
+     * Permet de calculer la moyenne pour les notes des annonces via les commentaires.
      *
      * @return float
      */
-    public function getAvgRatings(){
+    public function getAvgRatings()
+    {
         //calculer la somme des notations
-        $sum = array_reduce($this->comments->toArray(), function($total, $comment){
+        $sum = array_reduce($this->comments->toArray(), function ($total, $comment) {
             return $total + $comment->getRating();
         }, 0);
         //obtenir la moyenne
-        if(count($this->comments) > 0) return $sum / count($this->comments);
+        if (count($this->comments) > 0) {
+            return $sum / count($this->comments);
+        }
+
         return 0;
     }
 
     /**
-     * Cette fonction permet d'obtenir un tableau des jours indisponible
+     * Cette fonction permet d'obtenir un tableau des jours indisponible.
      *
      * @return array un tableau d'objet dateTime représentant les jours d'occupation du produit
      */
-    public function getNotAvailableDays(){
+    public function getNotAvailableDays()
+    {
         $notAvailableDays = [];
 
-        foreach($this->bookings as $booking){
+        foreach ($this->bookings as $booking) {
             //calcul des jours qui se trouve entre la date de debut et de fin
             $result = range($booking->getStartDate()->getTimestamp(),
                             $booking->getEndDate()->getTimestamp(),
-                            24*60*60
+                            24 * 60 * 60
             );
 
-            $days = array_map(function($dayTimestamp){
+            $days = array_map(function ($dayTimestamp) {
                 return new \DateTime(date('Y-m-d', $dayTimestamp));
             }, $result);
 
             $notAvailableDays = array_merge($notAvailableDays, $days);
         }
+
         return $notAvailableDays;
     }
 
-
     /**
-     * Permet d'initialiser le Slug
+     * Permet d'initialiser le Slug.
      *
      * @ORM\PrePersist
      * @ORM\PreUpdate
-     * 
+     *
      * @return void
      */
-    public function initializeSlug(){
-        if(empty($this->slug)){
+    public function initializeSlug()
+    {
+        if (empty($this->slug)) {
             $slugify = new Slugify();
             $this->slug = $slugify->slugify($this->title);
         }
@@ -275,6 +280,7 @@ class Ad
                 $image->setAd(null);
             }
         }
+
         return $this;
     }
 
@@ -349,5 +355,4 @@ class Ad
 
         return $this;
     }
-
 }

@@ -2,9 +2,9 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use App\Repository\CommentRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Repository\CommentRepository;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -68,12 +68,15 @@ class Comment
     private $author;
 
     /**
-     * Permet de mettre en place la date de création
+     * Permet de mettre en place la date de création.
+     *
      * @ORM\PrePersist()
+     *
      * @return void
      */
-    public function prePersist(){
-        if(empty($this->createdAt)){
+    public function prePersist()
+    {
+        if (empty($this->createdAt)) {
             $this->createdAt = new \DateTime();
         }
     }
