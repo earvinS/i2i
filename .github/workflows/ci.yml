@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Validate composer.json and composer.lock
-      run: composer validate --strict
+      run:    apt update -y;pecl install xdebug; docker-php-ext-enable xdebug;apt install -y libzip-dev zip;docker-php-ext-install pdo pdo_mysql zip;curl -sS https://getcomposer.org/installer | php;mv composer.phar /usr/local/bin/composer ;composer validate --strict;
 
     - name: Cache Composer packages
       id: composer-cache
