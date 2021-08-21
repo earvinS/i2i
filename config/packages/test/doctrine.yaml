@@ -1,8 +1,0 @@
-# doctrine:
-#     dbal:
-#         # "TEST_TOKEN" is typically set by ParaTest
-#         # dbname: i2i
-#         # host: localhost
-#         # port: 3306
-#         # user: root
-#         # url: mysql://root:@127.0.0.1:3306/i2i
